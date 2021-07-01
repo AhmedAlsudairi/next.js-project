@@ -18,6 +18,15 @@ const DUMMY_DATA = [
     desciption: "somewhat2",
   },
 ];
-export default function Home() {
-  return <MeetUpList meetups={DUMMY_DATA} />;
+export default function Home(props) {
+  return <MeetUpList meetups={props.meetups} />;
+}
+
+export async function getStaticProps() {
+  //fetch data
+  return {
+    props: {
+      meetups: DUMMY_DATA,
+    },
+  };
 }
