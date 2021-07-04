@@ -1,32 +1,43 @@
 import MeetUpList from "../components/meetups/MeetupList";
-
-const DUMMY_DATA = [
-  {
-    id: "m1",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg",
-    title: "evil",
-    address: "somthing",
-    desciption: "somewhat",
-  },
-  {
-    id: "m2",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg",
-    title: "taowe",
-    address: "somthing2",
-    desciption: "somewhat2",
-  },
-];
+import { MongoClient } from "mongodb";
+import Head from "next/head";
+import { Fragment } from "react";
 export default function Home(props) {
-  return <MeetUpList meetups={props.meetups} />;
+  return (
+    <Fragment>
+      <Head>
+        <title>Home</title>
+        <meta name="description" content="nothing"></meta>
+      </Head>
+      <MeetUpList meetups={props.meetups} />
+    </Fragment>
+  );
 }
 
 export async function getStaticProps() {
   //fetch data
+  const clinet = await MongoClient.connect(
+    "mongodb+srv://ahmed@cluster0.bgvji.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  );
+
+  const db = clinet.db();
+
+  const meetCollection = db.collection("meetups");
+
+  const result = await meetCollection.find().toArray();
+
+  console.log(result);
+
+  clinet.close();
   return {
     props: {
-      meetups: DUMMY_DATA,
+      meetups: result.map((meetup) => ({
+        title: meetup.title,
+        image: meetup.image,
+        address: meetup.address,
+        description: meetup.description,
+        id: meetup._id.toString(),
+      })),
     },
     revalidate: 10,
   };

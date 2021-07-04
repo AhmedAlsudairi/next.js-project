@@ -8,6 +8,7 @@ export default function Home() {
     axios.post("/api/new-meetup", meetup).then((res) => {
       console.log(res.data);
     });
+    router.push("/");
   };
   return <NewMeetupForm onAddMeetup={onAddMeetup} />;
 }
